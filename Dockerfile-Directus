@@ -1,0 +1,36 @@
+# Use Directus 10.13.2 image
+FROM directus/directus:10.13.2
+
+# Switch to root to perform system-wide operations
+USER root
+
+# Enable Corepack to manage package managers
+RUN corepack enable
+
+# Install python to compile directus-extension-search-engine
+ENV PYTHONUNBUFFERED=1
+RUN apk add --no-cache make gcc g++ python3 py3-pip
+
+# Switch back to node user for safer operations
+USER node
+
+# Install typesense plugin
+RUN pnpm install directus-extension-search-engine
+
+# Install global-agent package using pnpm
+RUN pnpm install global-agent@3
+
+# Copy the patch file into the container
+COPY ecosystem-global-agent.patch .
+
+# Switch back to root to apply the patch and clean up
+USER root
+RUN apk add --no-cache patch && \
+    patch -p1 < ecosystem-global-agent.patch && \
+    rm ecosystem-global-agent.patch && \
+    apk del patch
+
+# Switch back to node user
+USER node
+
+

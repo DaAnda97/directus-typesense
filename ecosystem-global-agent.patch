@@ -1,0 +1,12 @@
+diff --git a/ecosystem.config.cjs b/ecosystem.config.cjs
+index 5218fda853..4c53cabc80 100644
+--- a/ecosystem.config.cjs
++++ b/ecosystem.config.cjs
+@@ -10,6 +10,7 @@ module.exports = [
+ 		name: 'directus',
+ 		script: 'cli.js',
+ 		args: ['start'],
++		node_args: ['-r', 'global-agent/bootstrap'],
+
+ 		// General
+ 		instances: process.env.PM2_INSTANCES ?? 1,
